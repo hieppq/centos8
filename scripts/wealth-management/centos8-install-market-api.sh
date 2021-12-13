@@ -5,7 +5,7 @@
 ###############
 SCRIPT_DIR=$(dirname $0)
 echo $SCRIPT_DIR
-source "$SCRIPT_DIR/centos8-common.sh"
+source "$SCRIPT_DIR/../centos8-common.sh"
 
 JAVA_HOME=/opt/open-jdk-14.0.1
 JAVA_CMD=$JAVA_HOME/bin/java
