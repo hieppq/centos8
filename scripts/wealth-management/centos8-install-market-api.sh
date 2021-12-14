@@ -124,7 +124,7 @@ fi
 ###################################
 # Service Configuration 
 ###################################
-SERVICE_DEPLOY_SCRIPT=$SERVICE_SCRIPTS/deploy_market_service.sh
+SERVICE_DEPLOY_SCRIPT=$SERVICE_SCRIPTS/$PROJECT_NAME/deploy_market_service.sh
 is_overwrite=$(is_overwrite_file $SERVICE_DEPLOY_SCRIPT)
 if [[ $is_overwrite == "Y" || $is_overwrite == "y" ]]; then
   SERVICE_SRC_DEPLOY_SCRIPT_PATH=$SERVICE_SRC_ETC_PATH/scripts
@@ -132,7 +132,7 @@ if [[ $is_overwrite == "Y" || $is_overwrite == "y" ]]; then
 
   SERVICE_WORKING_DIR=$SERVICE_HOME \
   SERVICE_NAME=$SERVICE_NAME \
-    envsubst< $SCRIPT_DIR/$PROJECT_NAME/deploy_market_service.sh '${SERVICE_WORKING_DIR} ${SERVICE_NAME}' >  $SERVICE_SRC_DEPLOY_SCRIPT_PATH/deploy_market_service.sh
+    envsubst< $SCRIPT_DIR/$PROJECT_NAME/deploy_market_service.sh '${SERVICE_WORKING_DIR} ${SERVICE_NAME}' >  $SERVICE_SRC_DEPLOY_SCRIPT_PATH/$PROJECT_NAME/deploy_market_service.sh
   echo "> $SERVICE_SRC_DEPLOY_SCRIPT_PATH"
   cp $SERVICE_SRC_DEPLOY_SCRIPT_PATH/$PROJECT_NAME/deploy_market_service.sh $SERVICE_DEPLOY_SCRIPT && chmod +x $SERVICE_DEPLOY_SCRIPT 
 fi
