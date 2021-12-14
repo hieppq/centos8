@@ -14,8 +14,7 @@ JAVA_CMD=$JAVA_HOME/bin/java
 # Execute
 ###############
 
-
-
+PROJECT_NAME=${SERVICE_NAME:-"wealth-management"}
 SERVICE_VERSION=${SERVICE_VERSION:-"latest"}
 SERVICE_NAME=${SERVICE_NAME:-"market-api"}
 SERVICE_DESCRIPTION=${SERVICE_DESCRIPTION:-}
@@ -74,7 +73,7 @@ if [[ $is_overwrite == "Y" || $is_overwrite == "y" ]]; then
   ###
   export JAVA_CMD=$JAVA_CMD; \
   export SERVICE_WORKING_FOLDER=${SERVICE_HOME};\
-    envsubst< $SCRIPT_DIR/tradingview/$SERVICE_NAME.sysconfig '${JAVA_CMD} ${SERVICE_WORKING_FOLDER}'>  "$SERVICE_SRC_SYSCONFIG_PATH/$SERVICE_NAME.sysconfig"
+    envsubst< $SCRIPT_DIR/$PROJECT_NAME/$SERVICE_NAME.sysconfig '${JAVA_CMD} ${SERVICE_WORKING_FOLDER}'>  "$SERVICE_SRC_SYSCONFIG_PATH/$SERVICE_NAME.sysconfig"
   echo "> $SERVICE_SYSCONFIG"
   sudo cp $SERVICE_SRC_SYSCONFIG_PATH/$SERVICE_NAME.sysconfig $SERVICE_SYSCONFIG
 fi
@@ -96,7 +95,7 @@ if [[ $is_overwrite == "Y" || $is_overwrite == "y" ]]; then
   export SERVICE_SYSCONFIG=$SERVICE_SYSCONFIG; \
   export SERVICE_SERVER=$SERVICE_SERVER;\
   export SERVICE_WORKING_FOLDER=$SERVICE_HOME;
-    cat $SCRIPT_DIR/tradingview/${SERVICE_NAME}.service | envsubst '${SERVICE_DESCRIPTION} ${SERVICE_USER} ${SERVICE_GROUP} ${SERVICE_SYSCONFIG} ${SERVICE_WORKING_FOLDER}' > "$SERVICE_SRC_SYSTEMD_PATH/$SERVICE_NAME.service"
+    cat $SCRIPT_DIR/$PROJECT_NAME/${SERVICE_NAME}.service | envsubst '${SERVICE_DESCRIPTION} ${SERVICE_USER} ${SERVICE_GROUP} ${SERVICE_SYSCONFIG} ${SERVICE_WORKING_FOLDER}' > "$SERVICE_SRC_SYSTEMD_PATH/$SERVICE_NAME.service"
 
   echo "> $SERVICE_SYSTEMD"
   sudo cp $SERVICE_SRC_SYSTEMD_PATH/$SERVICE_NAME.service $SERVICE_SYSTEMD
@@ -117,7 +116,7 @@ if [[ $is_overwrite == "Y" || $is_overwrite == "y" ]]; then
   
   SERVICE_NAME=$SERVICE_NAME \
   SERVICE_GROUP=$USER \
-    envsubst< $SCRIPT_DIR/tradingview/$SERVICE_NAME.sudoers >  $SERVICE_SRC_SUDOERS_PATH/$SERVICE_NAME
+    envsubst< $SCRIPT_DIR/$PROJECT_NAME/$SERVICE_NAME.sudoers >  $SERVICE_SRC_SUDOERS_PATH/$SERVICE_NAME
   echo "> $SERVICE_SUDOERS"
   sudo cp $SERVICE_SRC_SUDOERS_PATH/$SERVICE_NAME $SERVICE_SUDOERS
 fi
@@ -133,7 +132,7 @@ if [[ $is_overwrite == "Y" || $is_overwrite == "y" ]]; then
 
   SERVICE_WORKING_DIR=$SERVICE_HOME \
   SERVICE_NAME=$SERVICE_NAME \
-    envsubst< $SCRIPT_DIR/tradingview/deploy_service.sh '${SERVICE_WORKING_DIR} ${SERVICE_NAME}' >  $SERVICE_SRC_DEPLOY_SCRIPT_PATH/deploy_service.sh
+    envsubst< $SCRIPT_DIR/$PROJECT_NAME/deploy_market_service.sh '${SERVICE_WORKING_DIR} ${SERVICE_NAME}' >  $SERVICE_SRC_DEPLOY_SCRIPT_PATH/deploy_market_service.sh
   echo "> $SERVICE_SRC_DEPLOY_SCRIPT_PATH"
   cp $SERVICE_SRC_DEPLOY_SCRIPT_PATH/deploy_service.sh $SERVICE_DEPLOY_SCRIPT && chmod +x $SERVICE_DEPLOY_SCRIPT 
 fi
