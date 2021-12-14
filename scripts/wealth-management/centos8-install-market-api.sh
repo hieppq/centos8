@@ -14,7 +14,7 @@ JAVA_CMD=$JAVA_HOME/bin/java
 # Execute
 ###############
 
-PROJECT_NAME=${SERVICE_NAME:-"wealth-management"}
+PROJECT_NAME=${PROJECT_NAME:-"wealth-management"}
 SERVICE_VERSION=${SERVICE_VERSION:-"latest"}
 SERVICE_NAME=${SERVICE_NAME:-"market-api"}
 SERVICE_DESCRIPTION=${SERVICE_DESCRIPTION:-}
@@ -73,8 +73,7 @@ if [[ $is_overwrite == "Y" || $is_overwrite == "y" ]]; then
   ###
   export JAVA_CMD=$JAVA_CMD; \
   export SERVICE_WORKING_FOLDER=${SERVICE_HOME};\
-    envsubst< $SCRIPT_DIR/$PROJECT_NAME/$SERVICE_NAME.sysconfig '${JAVA_CMD} ${SERVICE_WORKING_FOLDER}'>  "$SERVICE_SRC_SYSCONFIG_PATH/$SERVICE_NAME.sysconfig"
-  echo "> $SERVICE_SYSCONFIG"
+    envsubst< $SCRIPT_DIR/$SERVICE_NAME.sysconfig '${JAVA_CMD} ${SERVICE_WORKING_FOLDER}'>  "$SERVICE_SRC_SYSCONFIG_PATH/$SERVICE_NAME.sysconfig"
   sudo cp $SERVICE_SRC_SYSCONFIG_PATH/$SERVICE_NAME.sysconfig $SERVICE_SYSCONFIG
 fi
 
@@ -95,9 +94,9 @@ if [[ $is_overwrite == "Y" || $is_overwrite == "y" ]]; then
   export SERVICE_SYSCONFIG=$SERVICE_SYSCONFIG; \
   export SERVICE_SERVER=$SERVICE_SERVER;\
   export SERVICE_WORKING_FOLDER=$SERVICE_HOME;
-    cat $SCRIPT_DIR/$PROJECT_NAME/${SERVICE_NAME}.service | envsubst '${SERVICE_DESCRIPTION} ${SERVICE_USER} ${SERVICE_GROUP} ${SERVICE_SYSCONFIG} ${SERVICE_WORKING_FOLDER}' > "$SERVICE_SRC_SYSTEMD_PATH/$SERVICE_NAME.service"
+    cat $SCRIPT_DIR/${SERVICE_NAME}.service | envsubst '${SERVICE_DESCRIPTION} ${SERVICE_USER} ${SERVICE_GROUP} ${SERVICE_SYSCONFIG} ${SERVICE_WORKING_FOLDER}' > "$SERVICE_SRC_SYSTEMD_PATH/$SERVICE_NAME.service"
 
-  echo "> $SERVICE_SYSTEMD"
+  echo "> $SERVICE_SRC_SYSTEMD_PATH"
   sudo cp $SERVICE_SRC_SYSTEMD_PATH/$SERVICE_NAME.service $SERVICE_SYSTEMD
 
   echo "> Enable $SERVICE_NAME.service"
@@ -105,18 +104,18 @@ if [[ $is_overwrite == "Y" || $is_overwrite == "y" ]]; then
 fi
 
 
-###################################
-# Sudoers Service
-###################################
+##################################
+#Sudoers Service
+##################################
 SERVICE_SUDOERS=/etc/sudoers.d/$SERVICE_NAME
 is_overwrite=$(is_overwrite_file_with_sudo $SERVICE_SUDOERS)
 if [[ $is_overwrite == "Y" || $is_overwrite == "y" ]]; then
   SERVICE_SRC_SUDOERS_PATH=$SERVICE_SRC_ETC_PATH/sudoers.d
   [ ! -d $SERVICE_SRC_SUDOERS_PATH ] && { mkdir -p $SERVICE_SRC_SUDOERS_PATH; echo "create new $SERVICE_SRC_SUDOERS_PATH"; }
-  
+  echo $SERVICE_SRC_SUDOERS_PATH 
   SERVICE_NAME=$SERVICE_NAME \
   SERVICE_GROUP=$USER \
-    envsubst< $SCRIPT_DIR/$PROJECT_NAME/$SERVICE_NAME.sudoers >  $SERVICE_SRC_SUDOERS_PATH/$SERVICE_NAME
+    envsubst< $SCRIPT_DIR/template.sudoers >  $SERVICE_SRC_SUDOERS_PATH/$SERVICE_NAME
   echo "> $SERVICE_SUDOERS"
   sudo cp $SERVICE_SRC_SUDOERS_PATH/$SERVICE_NAME $SERVICE_SUDOERS
 fi
@@ -124,17 +123,18 @@ fi
 ###################################
 # Service Configuration 
 ###################################
-SERVICE_DEPLOY_SCRIPT=$SERVICE_SCRIPTS/$PROJECT_NAME/deploy_market_service.sh
+SERVICE_DEPLOY_SCRIPT=$SERVICE_SCRIPTS/deploy_service.sh
+echo "1. $SERVICE_DEPLOY_SCRIPT"
 is_overwrite=$(is_overwrite_file $SERVICE_DEPLOY_SCRIPT)
 if [[ $is_overwrite == "Y" || $is_overwrite == "y" ]]; then
   SERVICE_SRC_DEPLOY_SCRIPT_PATH=$SERVICE_SRC_ETC_PATH/scripts
   [ ! -d $SERVICE_SRC_DEPLOY_SCRIPT_PATH ] && { mkdir -p $SERVICE_SRC_DEPLOY_SCRIPT_PATH; echo "create new $SERVICE_SRC_DEPLOY_SCRIPT_PATH"; }
-
+  echo "1x. $SCRIPT_DIR/deploy_service.sh"
   SERVICE_WORKING_DIR=$SERVICE_HOME \
   SERVICE_NAME=$SERVICE_NAME \
-    envsubst< $SCRIPT_DIR/$PROJECT_NAME/deploy_market_service.sh '${SERVICE_WORKING_DIR} ${SERVICE_NAME}' >  $SERVICE_SRC_DEPLOY_SCRIPT_PATH/$PROJECT_NAME/deploy_market_service.sh
+    envsubst< $SCRIPT_DIR/deploy_service.sh '${SERVICE_WORKING_DIR} ${SERVICE_NAME}' >  $SERVICE_SRC_DEPLOY_SCRIPT_PATH/deploy_service.sh
   echo "> $SERVICE_SRC_DEPLOY_SCRIPT_PATH"
-  cp $SERVICE_SRC_DEPLOY_SCRIPT_PATH/$PROJECT_NAME/deploy_market_service.sh $SERVICE_DEPLOY_SCRIPT && chmod +x $SERVICE_DEPLOY_SCRIPT 
+  cp $SERVICE_SRC_DEPLOY_SCRIPT_PATH/deploy_service.sh $SERVICE_DEPLOY_SCRIPT && chmod +x $SERVICE_DEPLOY_SCRIPT 
 fi
 
 ###################################
